@@ -58,6 +58,19 @@ class Settings(BaseSettings):
     default_planning_window_min: int = 30
     default_prayer_buffer_min: int = 10
 
+    # Community mosque submissions (see docs/PROVIDERS.md)
+    community_mosques_enabled: bool = True
+    # Unverified submissions are excluded from automatic route planning
+    # unless an operator deliberately opts in here (they stay labelled
+    # "unverified" in every result either way).
+    community_include_unverified: bool = False
+    # A verified record that collects this many reports returns to
+    # `unverified` (and drops out of routing) pending re-review.
+    community_report_threshold: int = 3
+    # Minimal moderation: a shared secret required (X-Admin-Token header)
+    # to verify/reject submissions. Empty => moderation endpoint disabled.
+    admin_token: str = ""
+
     # Security / limits
     rate_limit_per_minute: int = 60
     cors_origins: str = "http://localhost:3000,http://localhost:5000"

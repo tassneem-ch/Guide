@@ -9,7 +9,15 @@ from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
 from .api import auth as auth_api
-from .api import geocode, mosques, places, prayer, routes, trips
+from .api import (
+    community_mosques,
+    geocode,
+    mosques,
+    places,
+    prayer,
+    routes,
+    trips,
+)
 from .config import get_settings
 from .core.ratelimit import limiter
 from .db.session import init_db
@@ -53,6 +61,7 @@ def create_app() -> FastAPI:
     app.include_router(geocode.router)
     app.include_router(places.router)
     app.include_router(trips.router)
+    app.include_router(community_mosques.router)
     app.include_router(auth_api.auth_router)
     app.include_router(auth_api.me_router)
     app.include_router(auth_api.health_router)

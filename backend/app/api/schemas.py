@@ -70,3 +70,37 @@ class ItinerarySummary(BaseModel):
     kind: str
     created_at: datetime
     updated_at: datetime
+
+
+class CommunityMosqueSubmit(BaseModel):
+    """Submission payload. There is deliberately NO status/verification
+    field — the server always starts a submission as `unverified`."""
+
+    name: str | None = Field(default=None, min_length=1, max_length=120)
+    lat: float = Field(ge=-90, le=90)
+    lon: float = Field(ge=-180, le=180)
+    address: str | None = Field(default=None, max_length=500)
+    opening_hours: str | None = Field(default=None, max_length=120)
+
+
+class CommunityMosqueOut(BaseModel):
+    id: str
+    name: str | None
+    lat: float
+    lon: float
+    address: str | None
+    opening_hours: str | None
+    status: str  # unverified | verified
+    created_at: datetime
+
+
+class CommunityMosqueReport(BaseModel):
+    reason: str | None = Field(default=None, max_length=300)
+
+
+class CommunityMosqueReview(BaseModel):
+    """Moderator action. `name` optionally corrects the record while
+    reviewing it."""
+
+    status: str = Field(pattern="^(verified|rejected)$")
+    name: str | None = Field(default=None, min_length=1, max_length=120)

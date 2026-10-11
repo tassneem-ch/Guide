@@ -18,6 +18,7 @@ from .base import (
 from .geocoding_fixture import FixtureGeocodingProvider
 from .geocoding_google import GoogleGeocodingProvider
 from .geocoding_nominatim import NominatimGeocodingProvider
+from .mosques_community import CommunityMosqueProvider
 from .mosques_fixture import FixtureMosqueProvider
 from .mosques_google import GoogleMosqueProvider
 from .mosques_osm import OsmMosqueProvider
@@ -40,6 +41,11 @@ class ProviderBundle:
         self.prayer: PrayerTimeProvider = _make_prayer(settings)
         self.routing: RoutingProvider = _make_routing(settings)
         self.mosques: MosqueProvider = _make_mosques(settings)
+        # Community submissions augment discovery (never replace it) — a
+        # decorator keeps env-based selection intact and the wrapper can
+        # degrade to the primary answer on any community failure.
+        if settings.community_mosques_enabled:
+            self.mosques = CommunityMosqueProvider(self.mosques)
         self.geocoding: GeocodingProvider = _make_geocoding(settings)
         self.optimization: OptimizationProvider | None = _make_optimization(settings)
         # Places (New) autocomplete: only when a Google key is configured and
