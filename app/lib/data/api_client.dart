@@ -48,6 +48,20 @@ class GuideApi {
         return data;
       });
 
+  /// GET [path] with [query]; returns decoded JSON list.
+  Future<List<dynamic>> getListJson(
+    String path, {
+    Map<String, dynamic>? query,
+  }) =>
+      _wrap(() async {
+        final res = await dio.get<List<dynamic>>(path, queryParameters: query);
+        final data = res.data;
+        if (data == null) {
+          throw const Failure('Empty response from server', kind: FailureKind.server);
+        }
+        return data;
+      });
+
   Future<T> _wrap<T>(Future<T> Function() run) async {
     try {
       return await run();

@@ -283,6 +283,9 @@ final repositoriesProvider = Provider<Repositories>((ref) {
       prayer: MockPrayerRepository(),
       route: MockRouteRepository(),
       trip: MockTripRepository(),
+      // No community repository in demo mode: submissions are writes to the
+      // real backend, and inventing local ones would be dishonest.
+      community: null,
       fixtureMode: true,
     );
   }
@@ -306,6 +309,7 @@ final repositoriesProvider = Provider<Repositories>((ref) {
     prayer: prayerRepo,
     route: ApiRouteRepository(api, store),
     trip: ApiTripRepository(api, store),
+    community: ApiCommunityMosqueRepository(api),
     fixtureMode: false,
   );
 });
@@ -316,6 +320,7 @@ class Repositories {
     required this.prayer,
     required this.route,
     required this.trip,
+    required this.community,
     required this.fixtureMode,
   });
 
@@ -323,6 +328,9 @@ class Repositories {
   final PrayerRepository prayer;
   final RouteRepository route;
   final TripRepository trip;
+
+  /// Community submissions need the real backend — null in demo mode.
+  final CommunityMosqueRepository? community;
   final bool fixtureMode;
 }
 

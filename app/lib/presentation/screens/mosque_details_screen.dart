@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../application/settings.dart';
 import '../../domain/models.dart';
+import '../../domain/repositories.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../widgets/common.dart';
 
@@ -189,9 +191,77 @@ class MosqueDetailsScreen extends ConsumerWidget {
                   icon: const Icon(Icons.directions_outlined),
                   label: Text(l10n.openInMaps),
                 ),
+                if (m.quality.provider == 'community') ...[
+                  const SizedBox(height: 8),
+                  _ReportIncorrect(mosque: m),
+                ],
                 const SizedBox(height: 24),
               ],
             ),
     );
+  }
+}
+
+/// Report a community-sourced record as incorrect. Only shown for records
+/// whose provider is `community` — Google/OSM data is reported upstream,
+/// not through Guide.
+class _ReportIncorrect extends ConsumerWidget {
+  const _ReportIncorrect({required this.mosque});
+
+  final MosqueCandidate mosque;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    return OutlinedButton.icon(
+      onPressed: () => _confirm(context, ref, l10n),
+      icon: const Icon(Icons.flag_outlined),
+      label: Text(l10n.reportIncorrect),
+    );
+  }
+
+  Future<void> _confirm(
+      BuildContext context, WidgetRef ref, AppLocalizations l10n) async {
+    final controller = TextEditingController();
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.reportIncorrect),
+        content: TextField(
+          controller: controller,
+          decoration: InputDecoration(labelText: l10n.reportReason),
+          maxLength: 300,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(l10n.reportIncorrect),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+
+    final repo = ref.read(repositoriesProvider).community;
+    if (repo == null) return;
+    try {
+      await repo.report(mosque.id,
+          reason: controller.text.trim().isEmpty ? null : controller.text);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.reportSubmitted)),
+        );
+      }
+    } on Failure {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.reportFailed)),
+        );
+      }
+    }
   }
 }

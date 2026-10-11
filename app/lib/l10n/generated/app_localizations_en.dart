@@ -518,4 +518,127 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get prayerSourceAladhan => 'Direct from AlADHAN (no server needed)';
+
+  @override
+  String get navigateGoogleMaps => 'Navigate with Google Maps';
+
+  @override
+  String get navigateGoogleMapsNote =>
+      'Opens your selected journey — origin, planned mosque stops in order, and destination. Google Maps calculates its own route and timings; Guide\'s prayer plan stays here.';
+
+  @override
+  String get navigateLaunchFailed =>
+      'Could not open Google Maps on this device.';
+
+  @override
+  String get navigateMissingCoordinates =>
+      'This journey is missing coordinates and cannot be exported.';
+
+  @override
+  String navigateLegTitle(int i, int n) {
+    return 'Leg $i of $n';
+  }
+
+  @override
+  String navigateMultiLegNote(int n) {
+    return 'This journey has more stops than Google Maps accepts in one request. It is split into $n legs in your planned order — open each leg in turn; reopens from where the previous leg ended.';
+  }
+
+  @override
+  String navigateOpenLeg(int i) {
+    return 'Open leg $i';
+  }
+
+  @override
+  String navigateLegOpened(int i) {
+    return 'Leg $i opened in Google Maps. Return here for the next leg when you are ready.';
+  }
+
+  @override
+  String get communitySection => 'Community';
+
+  @override
+  String get suggestMosque => 'Suggest a missing mosque';
+
+  @override
+  String get suggestMosqueSubtitle =>
+      'Help others by submitting a mosque that is missing from the map';
+
+  @override
+  String get communityUnavailableDemo =>
+      'Community submissions need a connection to the Guide backend — unavailable in demo mode.';
+
+  @override
+  String get mosqueLocation => 'Mosque location';
+
+  @override
+  String get mosqueLocationSearch => 'Search for the mosque location';
+
+  @override
+  String get pickOnMapHint => 'Tap the map to set the exact location';
+
+  @override
+  String get mosqueNameOptional => 'Mosque name (optional)';
+
+  @override
+  String get mosqueNameHint => 'Leave blank if the mosque has no known name';
+
+  @override
+  String get mosqueAddressOptional => 'Address or description (optional)';
+
+  @override
+  String get mosqueOpeningHoursOptional => 'Opening hours, if known (optional)';
+
+  @override
+  String get mosqueOpeningHoursNote =>
+      'Community-provided hours are shown as unverified';
+
+  @override
+  String get submitMosque => 'Submit for review';
+
+  @override
+  String get submittingMosque => 'Submitting…';
+
+  @override
+  String get submissionSuccess =>
+      'Submitted — pending review. It will not appear in route planning until a moderator confirms it.';
+
+  @override
+  String get submissionDuplicate =>
+      'A similar mosque was already submitted (pending review).';
+
+  @override
+  String get submissionLocationRequired => 'Set the mosque location first.';
+
+  @override
+  String get mySubmissions => 'My submissions';
+
+  @override
+  String get mySubmissionsEmpty => 'No submissions yet on this device.';
+
+  @override
+  String get statusUnverified => 'Unverified — pending review';
+
+  @override
+  String get statusVerified => 'Verified';
+
+  @override
+  String get reportIncorrect => 'Report incorrect information';
+
+  @override
+  String get reportReason => 'What is wrong? (optional)';
+
+  @override
+  String get reportSubmitted =>
+      'Reported — thank you. A moderator will review this record.';
+
+  @override
+  String get reportFailed => 'Could not send the report.';
+
+  @override
+  String get viewSubmissionStatuses => 'Submission status';
+
+  @override
+  String get locationDeniedCommunity =>
+      'Location permission denied — pick the location on the map or search instead.';
 }

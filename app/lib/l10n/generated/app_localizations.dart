@@ -1035,6 +1035,216 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Direct from AlADHAN (no server needed)'**
   String get prayerSourceAladhan;
+
+  /// No description provided for @navigateGoogleMaps.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigate with Google Maps'**
+  String get navigateGoogleMaps;
+
+  /// No description provided for @navigateGoogleMapsNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Opens your selected journey — origin, planned mosque stops in order, and destination. Google Maps calculates its own route and timings; Guide\'s prayer plan stays here.'**
+  String get navigateGoogleMapsNote;
+
+  /// No description provided for @navigateLaunchFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open Google Maps on this device.'**
+  String get navigateLaunchFailed;
+
+  /// No description provided for @navigateMissingCoordinates.
+  ///
+  /// In en, this message translates to:
+  /// **'This journey is missing coordinates and cannot be exported.'**
+  String get navigateMissingCoordinates;
+
+  /// No description provided for @navigateLegTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Leg {i} of {n}'**
+  String navigateLegTitle(int i, int n);
+
+  /// No description provided for @navigateMultiLegNote.
+  ///
+  /// In en, this message translates to:
+  /// **'This journey has more stops than Google Maps accepts in one request. It is split into {n} legs in your planned order — open each leg in turn; reopens from where the previous leg ended.'**
+  String navigateMultiLegNote(int n);
+
+  /// No description provided for @navigateOpenLeg.
+  ///
+  /// In en, this message translates to:
+  /// **'Open leg {i}'**
+  String navigateOpenLeg(int i);
+
+  /// No description provided for @navigateLegOpened.
+  ///
+  /// In en, this message translates to:
+  /// **'Leg {i} opened in Google Maps. Return here for the next leg when you are ready.'**
+  String navigateLegOpened(int i);
+
+  /// No description provided for @communitySection.
+  ///
+  /// In en, this message translates to:
+  /// **'Community'**
+  String get communitySection;
+
+  /// No description provided for @suggestMosque.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggest a missing mosque'**
+  String get suggestMosque;
+
+  /// No description provided for @suggestMosqueSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Help others by submitting a mosque that is missing from the map'**
+  String get suggestMosqueSubtitle;
+
+  /// No description provided for @communityUnavailableDemo.
+  ///
+  /// In en, this message translates to:
+  /// **'Community submissions need a connection to the Guide backend — unavailable in demo mode.'**
+  String get communityUnavailableDemo;
+
+  /// No description provided for @mosqueLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Mosque location'**
+  String get mosqueLocation;
+
+  /// No description provided for @mosqueLocationSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for the mosque location'**
+  String get mosqueLocationSearch;
+
+  /// No description provided for @pickOnMapHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the map to set the exact location'**
+  String get pickOnMapHint;
+
+  /// No description provided for @mosqueNameOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Mosque name (optional)'**
+  String get mosqueNameOptional;
+
+  /// No description provided for @mosqueNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave blank if the mosque has no known name'**
+  String get mosqueNameHint;
+
+  /// No description provided for @mosqueAddressOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Address or description (optional)'**
+  String get mosqueAddressOptional;
+
+  /// No description provided for @mosqueOpeningHoursOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening hours, if known (optional)'**
+  String get mosqueOpeningHoursOptional;
+
+  /// No description provided for @mosqueOpeningHoursNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Community-provided hours are shown as unverified'**
+  String get mosqueOpeningHoursNote;
+
+  /// No description provided for @submitMosque.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit for review'**
+  String get submitMosque;
+
+  /// No description provided for @submittingMosque.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitting…'**
+  String get submittingMosque;
+
+  /// No description provided for @submissionSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted — pending review. It will not appear in route planning until a moderator confirms it.'**
+  String get submissionSuccess;
+
+  /// No description provided for @submissionDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'A similar mosque was already submitted (pending review).'**
+  String get submissionDuplicate;
+
+  /// No description provided for @submissionLocationRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Set the mosque location first.'**
+  String get submissionLocationRequired;
+
+  /// No description provided for @mySubmissions.
+  ///
+  /// In en, this message translates to:
+  /// **'My submissions'**
+  String get mySubmissions;
+
+  /// No description provided for @mySubmissionsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No submissions yet on this device.'**
+  String get mySubmissionsEmpty;
+
+  /// No description provided for @statusUnverified.
+  ///
+  /// In en, this message translates to:
+  /// **'Unverified — pending review'**
+  String get statusUnverified;
+
+  /// No description provided for @statusVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified'**
+  String get statusVerified;
+
+  /// No description provided for @reportIncorrect.
+  ///
+  /// In en, this message translates to:
+  /// **'Report incorrect information'**
+  String get reportIncorrect;
+
+  /// No description provided for @reportReason.
+  ///
+  /// In en, this message translates to:
+  /// **'What is wrong? (optional)'**
+  String get reportReason;
+
+  /// No description provided for @reportSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Reported — thank you. A moderator will review this record.'**
+  String get reportSubmitted;
+
+  /// No description provided for @reportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not send the report.'**
+  String get reportFailed;
+
+  /// No description provided for @viewSubmissionStatuses.
+  ///
+  /// In en, this message translates to:
+  /// **'Submission status'**
+  String get viewSubmissionStatuses;
+
+  /// No description provided for @locationDeniedCommunity.
+  ///
+  /// In en, this message translates to:
+  /// **'Location permission denied — pick the location on the map or search instead.'**
+  String get locationDeniedCommunity;
 }
 
 class _AppLocalizationsDelegate

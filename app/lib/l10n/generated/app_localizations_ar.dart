@@ -515,4 +515,125 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get prayerSourceAladhan => 'مباشرة من AlADHAN (بدون خادم)';
+
+  @override
+  String get navigateGoogleMaps => 'الملاحة عبر خرائط Google';
+
+  @override
+  String get navigateGoogleMapsNote =>
+      'يفتح رحلتك المختارة — نقطة الانطلاق، ومحطات المسجد المخططة بالترتيب، والوجهة. تحسب خرائط Google مسارها وأوقاتها الخاصة؛ وتبقى خطة الصلاة في Guide.';
+
+  @override
+  String get navigateLaunchFailed => 'تعذر فتح خرائط Google على هذا الجهاز.';
+
+  @override
+  String get navigateMissingCoordinates =>
+      'هذه الرحلة تفتقد إلى الإحداثيات ولا يمكن تصديرها.';
+
+  @override
+  String navigateLegTitle(int i, int n) {
+    return 'المرحلة $i من $n';
+  }
+
+  @override
+  String navigateMultiLegNote(int n) {
+    return 'هذه الرحلة بها محطات أكثر مما تقبله خرائط Google في طلب واحد. تم تقسيمها إلى $n مراحل بترتيب خطتك — افتح كل مرحلة بالتناوب؛ تُستأنف من حيث انتهت المرحلة السابقة.';
+  }
+
+  @override
+  String navigateOpenLeg(int i) {
+    return 'افتح المرحلة $i';
+  }
+
+  @override
+  String navigateLegOpened(int i) {
+    return 'فُتحت المرحلة $i في خرائط Google. عد إلى هنا للمرحلة التالية عندما تكون مستعدًا.';
+  }
+
+  @override
+  String get communitySection => 'المجتمع';
+
+  @override
+  String get suggestMosque => 'اقترح مسجدًا مفقودًا';
+
+  @override
+  String get suggestMosqueSubtitle =>
+      'ساعد الآخرين بإرسال مسجد غائب عن الخريطة';
+
+  @override
+  String get communityUnavailableDemo =>
+      'اقتراحات المساجد تتطلب اتصالًا بخادم Guide — غير متاحة في الوضع التجريبي.';
+
+  @override
+  String get mosqueLocation => 'موقع المسجد';
+
+  @override
+  String get mosqueLocationSearch => 'ابحث عن موقع المسجد';
+
+  @override
+  String get pickOnMapHint => 'اضغط على الخريطة لتحديد الموقع الدقيق';
+
+  @override
+  String get mosqueNameOptional => 'اسم المسجد (اختياري)';
+
+  @override
+  String get mosqueNameHint => 'اتركه فارغًا إذا لم يكن للمسجد اسم معروف';
+
+  @override
+  String get mosqueAddressOptional => 'العنوان أو الوصف (اختياري)';
+
+  @override
+  String get mosqueOpeningHoursOptional => 'ساعات العمل، إن عُرفت (اختياري)';
+
+  @override
+  String get mosqueOpeningHoursNote =>
+      'ساعات العمل المقدَّمة من المجتمع تُعرض كغير موثقة';
+
+  @override
+  String get submitMosque => 'أرسل للمراجعة';
+
+  @override
+  String get submittingMosque => 'جارٍ الإرسال…';
+
+  @override
+  String get submissionSuccess =>
+      'تم الإرسال — بانتظار المراجعة. لن يظهر في تخطيط المسار حتى يؤكده المشرف.';
+
+  @override
+  String get submissionDuplicate =>
+      'تم إرسال مسجد مشابه مسبقًا (قيد المراجعة).';
+
+  @override
+  String get submissionLocationRequired => 'حدد موقع المسجد أولًا.';
+
+  @override
+  String get mySubmissions => 'طلباتي';
+
+  @override
+  String get mySubmissionsEmpty => 'لا توجد طلبات على هذا الجهاز بعد.';
+
+  @override
+  String get statusUnverified => 'غير موثق — بانتظار المراجعة';
+
+  @override
+  String get statusVerified => 'موثق';
+
+  @override
+  String get reportIncorrect => 'أبلغ عن معلومات خاطئة';
+
+  @override
+  String get reportReason => 'ما هو الخطأ؟ (اختياري)';
+
+  @override
+  String get reportSubmitted => 'تم الإبلاغ — شكرًا. سيراجع المشرف هذا السجل.';
+
+  @override
+  String get reportFailed => 'تعذر إرسال البلاغ.';
+
+  @override
+  String get viewSubmissionStatuses => 'حالة الطلبات';
+
+  @override
+  String get locationDeniedCommunity =>
+      'إذن الموقع مرفوض — حدد الموقع على الخريطة أو ابحث عنه بدلاً من ذلك.';
 }

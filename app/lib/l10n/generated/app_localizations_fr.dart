@@ -521,4 +521,132 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get prayerSourceAladhan => 'En direct d\'AlADHAN (sans serveur)';
+
+  @override
+  String get navigateGoogleMaps => 'Naviguer avec Google Maps';
+
+  @override
+  String get navigateGoogleMapsNote =>
+      'Ouvre votre itinéraire choisi — départ, arrêts mosquée prévus dans l\'ordre, et destination. Google Maps calcule son propre trajet et ses propres horaires ; le plan de prière de Guide reste ici.';
+
+  @override
+  String get navigateLaunchFailed =>
+      'Impossible d\'ouvrir Google Maps sur cet appareil.';
+
+  @override
+  String get navigateMissingCoordinates =>
+      'Cet itinéraire n\'a pas de coordonnées et ne peut pas être exporté.';
+
+  @override
+  String navigateLegTitle(int i, int n) {
+    return 'Étape $i sur $n';
+  }
+
+  @override
+  String navigateMultiLegNote(int n) {
+    return 'Cet itinéraire a plus d\'arrêts que Google Maps n\'en accepte dans une seule requête. Il est découpé en $n étapes dans l\'ordre prévu — ouvrez chaque étape à son tour ; la suivante reprend où la précédente s\'est terminée.';
+  }
+
+  @override
+  String navigateOpenLeg(int i) {
+    return 'Ouvrir l\'étape $i';
+  }
+
+  @override
+  String navigateLegOpened(int i) {
+    return 'Étape $i ouverte dans Google Maps. Revenez ici pour l\'étape suivante quand vous êtes prêt.';
+  }
+
+  @override
+  String get communitySection => 'Communauté';
+
+  @override
+  String get suggestMosque => 'Suggérer une mosquée manquante';
+
+  @override
+  String get suggestMosqueSubtitle =>
+      'Aidez les autres en signalant une mosquée absente de la carte';
+
+  @override
+  String get communityUnavailableDemo =>
+      'Les propositions de mosquées nécessitent une connexion au serveur Guide — indisponible en mode démo.';
+
+  @override
+  String get mosqueLocation => 'Emplacement de la mosquée';
+
+  @override
+  String get mosqueLocationSearch => 'Rechercher l\'emplacement de la mosquée';
+
+  @override
+  String get pickOnMapHint =>
+      'Touchez la carte pour placer l\'emplacement exact';
+
+  @override
+  String get mosqueNameOptional => 'Nom de la mosquée (facultatif)';
+
+  @override
+  String get mosqueNameHint =>
+      'Laissez vide si la mosquée n\'a pas de nom connu';
+
+  @override
+  String get mosqueAddressOptional => 'Adresse ou description (facultatif)';
+
+  @override
+  String get mosqueOpeningHoursOptional =>
+      'Horaires d\'ouverture, si connus (facultatif)';
+
+  @override
+  String get mosqueOpeningHoursNote =>
+      'Les horaires fournis par la communauté sont affichés comme non vérifiés';
+
+  @override
+  String get submitMosque => 'Envoyer pour vérification';
+
+  @override
+  String get submittingMosque => 'Envoi en cours…';
+
+  @override
+  String get submissionSuccess =>
+      'Envoyé — en attente de vérification. N\'apparaîtra pas dans la planification d\'itinéraire tant qu\'un modérateur ne l\'a pas confirmé.';
+
+  @override
+  String get submissionDuplicate =>
+      'Une mosquée similaire a déjà été proposée (en attente de vérification).';
+
+  @override
+  String get submissionLocationRequired =>
+      'Indiquez d\'abord l\'emplacement de la mosquée.';
+
+  @override
+  String get mySubmissions => 'Mes propositions';
+
+  @override
+  String get mySubmissionsEmpty =>
+      'Aucune proposition sur cet appareil pour l\'instant.';
+
+  @override
+  String get statusUnverified => 'Non vérifié — en attente';
+
+  @override
+  String get statusVerified => 'Vérifié';
+
+  @override
+  String get reportIncorrect => 'Signaler une information erronée';
+
+  @override
+  String get reportReason => 'Qu\'est-ce qui est faux ? (facultatif)';
+
+  @override
+  String get reportSubmitted =>
+      'Signalé — merci. Un modérateur examinera cet enregistrement.';
+
+  @override
+  String get reportFailed => 'Impossible d\'envoyer le signalement.';
+
+  @override
+  String get viewSubmissionStatuses => 'État des propositions';
+
+  @override
+  String get locationDeniedCommunity =>
+      'Permission de localisation refusée — choisissez l\'emplacement sur la carte ou recherchez-le.';
 }

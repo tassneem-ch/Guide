@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 
 import '../domain/models.dart';
 
+import '../presentation/screens/community_mosque_screen.dart';
 import '../presentation/screens/home_screen.dart';
 import '../presentation/screens/journey_screen.dart';
 import '../presentation/screens/mosque_details_screen.dart';
@@ -42,6 +43,10 @@ final goRouter = GoRouter(
           builder: (context, state) => MosqueDetailsScreen(
             mosque: state.extra is MosqueCandidate ? state.extra as MosqueCandidate : null,
           ),
+        ),
+        GoRoute(
+          path: 'community/mosque',
+          builder: (context, state) => const CommunityMosqueScreen(),
         ),
       ],
     ),

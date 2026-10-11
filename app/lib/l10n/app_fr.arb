@@ -213,5 +213,54 @@
   "prayerSourceTitle": "Source des horaires de prière",
   "prayerSourceAuto": "Automatique — serveur, ou AlADHAN en direct si hors ligne",
   "prayerSourceBackend": "Serveur (via le serveur Guide)",
-  "prayerSourceAladhan": "En direct d'AlADHAN (sans serveur)"
+  "prayerSourceAladhan": "En direct d'AlADHAN (sans serveur)",
+
+  "navigateGoogleMaps": "Naviguer avec Google Maps",
+  "navigateGoogleMapsNote": "Ouvre votre itinéraire choisi — départ, arrêts mosquée prévus dans l'ordre, et destination. Google Maps calcule son propre trajet et ses propres horaires ; le plan de prière de Guide reste ici.",
+  "navigateLaunchFailed": "Impossible d'ouvrir Google Maps sur cet appareil.",
+  "navigateMissingCoordinates": "Cet itinéraire n'a pas de coordonnées et ne peut pas être exporté.",
+  "navigateLegTitle": "Étape {i} sur {n}",
+  "@navigateLegTitle": {
+    "placeholders": { "i": { "type": "int" }, "n": { "type": "int" } }
+  },
+  "navigateMultiLegNote": "Cet itinéraire a plus d'arrêts que Google Maps n'en accepte dans une seule requête. Il est découpé en {n} étapes dans l'ordre prévu — ouvrez chaque étape à son tour ; la suivante reprend où la précédente s'est terminée.",
+  "@navigateMultiLegNote": {
+    "placeholders": { "n": { "type": "int" } }
+  },
+  "navigateOpenLeg": "Ouvrir l'étape {i}",
+  "@navigateOpenLeg": {
+    "placeholders": { "i": { "type": "int" } }
+  },
+  "navigateLegOpened": "Étape {i} ouverte dans Google Maps. Revenez ici pour l'étape suivante quand vous êtes prêt.",
+  "@navigateLegOpened": {
+    "placeholders": { "i": { "type": "int" } }
+  },
+
+  "communitySection": "Communauté",
+  "suggestMosque": "Suggérer une mosquée manquante",
+  "suggestMosqueSubtitle": "Aidez les autres en signalant une mosquée absente de la carte",
+  "communityUnavailableDemo": "Les propositions de mosquées nécessitent une connexion au serveur Guide — indisponible en mode démo.",
+  "mosqueLocation": "Emplacement de la mosquée",
+  "mosqueLocationSearch": "Rechercher l'emplacement de la mosquée",
+  "pickOnMapHint": "Touchez la carte pour placer l'emplacement exact",
+  "mosqueNameOptional": "Nom de la mosquée (facultatif)",
+  "mosqueNameHint": "Laissez vide si la mosquée n'a pas de nom connu",
+  "mosqueAddressOptional": "Adresse ou description (facultatif)",
+  "mosqueOpeningHoursOptional": "Horaires d'ouverture, si connus (facultatif)",
+  "mosqueOpeningHoursNote": "Les horaires fournis par la communauté sont affichés comme non vérifiés",
+  "submitMosque": "Envoyer pour vérification",
+  "submittingMosque": "Envoi en cours…",
+  "submissionSuccess": "Envoyé — en attente de vérification. N'apparaîtra pas dans la planification d'itinéraire tant qu'un modérateur ne l'a pas confirmé.",
+  "submissionDuplicate": "Une mosquée similaire a déjà été proposée (en attente de vérification).",
+  "submissionLocationRequired": "Indiquez d'abord l'emplacement de la mosquée.",
+  "mySubmissions": "Mes propositions",
+  "mySubmissionsEmpty": "Aucune proposition sur cet appareil pour l'instant.",
+  "statusUnverified": "Non vérifié — en attente",
+  "statusVerified": "Vérifié",
+  "reportIncorrect": "Signaler une information erronée",
+  "reportReason": "Qu'est-ce qui est faux ? (facultatif)",
+  "reportSubmitted": "Signalé — merci. Un modérateur examinera cet enregistrement.",
+  "reportFailed": "Impossible d'envoyer le signalement.",
+  "viewSubmissionStatuses": "État des propositions",
+  "locationDeniedCommunity": "Permission de localisation refusée — choisissez l'emplacement sur la carte ou recherchez-le."
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../application/settings.dart';
 import '../../core/format.dart';
@@ -288,6 +289,24 @@ class SettingsScreen extends ConsumerWidget {
                   subtitle: Text(settings.backendUrl),
                   enabled: !settings.demoMode,
                   onTap: () => _editBackendUrl(context, ref, settings),
+                ),
+              ],
+            ),
+          ),
+
+          // ---- community (secondary utility) ------------------------------
+          SectionHeader(l10n.communitySection),
+          Card(
+            child: Column(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.add_location_alt_outlined),
+                  title: Text(l10n.suggestMosque),
+                  subtitle: Text(settings.demoMode
+                      ? l10n.communityUnavailableDemo
+                      : l10n.suggestMosqueSubtitle),
+                  enabled: !settings.demoMode,
+                  onTap: () => context.push('/community/mosque'),
                 ),
               ],
             ),

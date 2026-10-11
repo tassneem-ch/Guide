@@ -273,3 +273,58 @@ class ApiTripRepository implements TripRepository {
     }
   }
 }
+
+class ApiCommunityMosqueRepository implements CommunityMosqueRepository {
+  ApiCommunityMosqueRepository(this._api);
+
+  final GuideApi _api;
+
+  /// Community ids in results are namespaced (`community-<uuid>`); the
+  /// submission endpoints take the bare uuid.
+  static String bareId(String id) =>
+      id.startsWith('community-') ? id.substring('community-'.length) : id;
+
+  @override
+  Future<CommunityMosqueRecord> submit({
+    required GeoPoint location,
+    String? name,
+    String? address,
+    String? openingHours,
+  }) async {
+    // No caching: submissions are writes and their status must be the
+    // server's answer, never a stale copy.
+    final json = await _api.postJson(
+      '/v1/community/mosques',
+      body: {
+        'lat': location.lat,
+        'lon': location.lon,
+        if (name != null && name.trim().isNotEmpty) 'name': name.trim(),
+        if (address != null && address.trim().isNotEmpty)
+          'address': address.trim(),
+        if (openingHours != null && openingHours.trim().isNotEmpty)
+          'opening_hours': openingHours.trim(),
+      },
+    );
+    return CommunityMosqueRecord.fromJson(json);
+  }
+
+  @override
+  Future<List<CommunityMosqueRecord>> statuses(List<String> ids) async {
+    if (ids.isEmpty) return const [];
+    final json = await _api.getListJson(
+      '/v1/community/mosques',
+      query: {'ids': ids.map(bareId).join(',')},
+    );
+    return json
+        .map((r) => CommunityMosqueRecord.fromJson(r as Map<String, dynamic>))
+        .toList();
+  }
+
+  @override
+  Future<void> report(String id, {String? reason}) async {
+    await _api.postJson(
+      '/v1/community/mosques/${bareId(id)}/report',
+      body: {if (reason != null && reason.trim().isNotEmpty) 'reason': reason.trim()},
+    );
+  }
+}

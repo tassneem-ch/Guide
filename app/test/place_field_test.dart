@@ -62,6 +62,7 @@ Widget _harness(GeocodeRepository repo, Widget Function() field) =>
           prayer: MockPrayerRepository(),
           route: MockRouteRepository(),
           trip: MockTripRepository(),
+          community: null,
           fixtureMode: false,
         )),
       ],

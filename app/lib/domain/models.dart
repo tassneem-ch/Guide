@@ -332,6 +332,50 @@ class MosqueCandidate {
       );
 }
 
+/// One community-submitted mosque record (see Feature A).
+///
+/// Status is server-assigned and always starts `unverified` — nothing here
+/// can assert verification, and missing records (removed by moderators)
+/// are simply absent, never fabricated.
+class CommunityMosqueRecord {
+  const CommunityMosqueRecord({
+    required this.id,
+    required this.name,
+    required this.location,
+    required this.status,
+    required this.createdAt,
+    this.address,
+    this.openingHours,
+  });
+
+  final String id;
+  final String? name;
+  final GeoPoint location;
+  final String? address;
+  final String? openingHours;
+  final String status; // unverified | verified
+  final DateTime createdAt;
+
+  bool get isVerified => status == 'verified';
+
+  String get label =>
+      name ?? '${location.lat.toStringAsFixed(5)}, ${location.lon.toStringAsFixed(5)}';
+
+  factory CommunityMosqueRecord.fromJson(Map<String, dynamic> json) =>
+      CommunityMosqueRecord(
+        id: json['id'] as String,
+        name: json['name'] as String?,
+        location: GeoPoint(
+          lat: (json['lat'] as num).toDouble(),
+          lon: (json['lon'] as num).toDouble(),
+        ),
+        address: json['address'] as String?,
+        openingHours: json['opening_hours'] as String?,
+        status: json['status'] as String,
+        createdAt: DateTime.parse(json['created_at'] as String).toUtc(),
+      );
+}
+
 // ---------------------------------------------------------------------------
 // Routes / itinerary
 // ---------------------------------------------------------------------------

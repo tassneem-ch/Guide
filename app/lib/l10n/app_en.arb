@@ -213,5 +213,54 @@
   "prayerSourceTitle": "Prayer times source",
   "prayerSourceAuto": "Automatic — backend, or direct AlADHAN if offline",
   "prayerSourceBackend": "Backend (routes through the Guide server)",
-  "prayerSourceAladhan": "Direct from AlADHAN (no server needed)"
+  "prayerSourceAladhan": "Direct from AlADHAN (no server needed)",
+
+  "navigateGoogleMaps": "Navigate with Google Maps",
+  "navigateGoogleMapsNote": "Opens your selected journey — origin, planned mosque stops in order, and destination. Google Maps calculates its own route and timings; Guide's prayer plan stays here.",
+  "navigateLaunchFailed": "Could not open Google Maps on this device.",
+  "navigateMissingCoordinates": "This journey is missing coordinates and cannot be exported.",
+  "navigateLegTitle": "Leg {i} of {n}",
+  "@navigateLegTitle": {
+    "placeholders": { "i": { "type": "int" }, "n": { "type": "int" } }
+  },
+  "navigateMultiLegNote": "This journey has more stops than Google Maps accepts in one request. It is split into {n} legs in your planned order — open each leg in turn; reopens from where the previous leg ended.",
+  "@navigateMultiLegNote": {
+    "placeholders": { "n": { "type": "int" } }
+  },
+  "navigateOpenLeg": "Open leg {i}",
+  "@navigateOpenLeg": {
+    "placeholders": { "i": { "type": "int" } }
+  },
+  "navigateLegOpened": "Leg {i} opened in Google Maps. Return here for the next leg when you are ready.",
+  "@navigateLegOpened": {
+    "placeholders": { "i": { "type": "int" } }
+  },
+
+  "communitySection": "Community",
+  "suggestMosque": "Suggest a missing mosque",
+  "suggestMosqueSubtitle": "Help others by submitting a mosque that is missing from the map",
+  "communityUnavailableDemo": "Community submissions need a connection to the Guide backend — unavailable in demo mode.",
+  "mosqueLocation": "Mosque location",
+  "mosqueLocationSearch": "Search for the mosque location",
+  "pickOnMapHint": "Tap the map to set the exact location",
+  "mosqueNameOptional": "Mosque name (optional)",
+  "mosqueNameHint": "Leave blank if the mosque has no known name",
+  "mosqueAddressOptional": "Address or description (optional)",
+  "mosqueOpeningHoursOptional": "Opening hours, if known (optional)",
+  "mosqueOpeningHoursNote": "Community-provided hours are shown as unverified",
+  "submitMosque": "Submit for review",
+  "submittingMosque": "Submitting…",
+  "submissionSuccess": "Submitted — pending review. It will not appear in route planning until a moderator confirms it.",
+  "submissionDuplicate": "A similar mosque was already submitted (pending review).",
+  "submissionLocationRequired": "Set the mosque location first.",
+  "mySubmissions": "My submissions",
+  "mySubmissionsEmpty": "No submissions yet on this device.",
+  "statusUnverified": "Unverified — pending review",
+  "statusVerified": "Verified",
+  "reportIncorrect": "Report incorrect information",
+  "reportReason": "What is wrong? (optional)",
+  "reportSubmitted": "Reported — thank you. A moderator will review this record.",
+  "reportFailed": "Could not send the report.",
+  "viewSubmissionStatuses": "Submission status",
+  "locationDeniedCommunity": "Location permission denied — pick the location on the map or search instead."
 }

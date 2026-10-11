@@ -87,6 +87,28 @@ abstract interface class TripRepository {
   });
 }
 
+/// Community mosque submissions (secondary utility).
+///
+/// The server always assigns `unverified` to new submissions — this
+/// interface has no way to claim verification, and [statuses] only ever
+/// reports what the server said.
+abstract interface class CommunityMosqueRepository {
+  /// Submit a mosque for review. Coordinates are required; the name is
+  /// optional (unnamed mosques are legitimate).
+  Future<CommunityMosqueRecord> submit({
+    required GeoPoint location,
+    String? name,
+    String? address,
+    String? openingHours,
+  });
+
+  /// Look up the status of previously submitted records by their ids.
+  Future<List<CommunityMosqueRecord>> statuses(List<String> ids);
+
+  /// Report an incorrect record (id from a community-sourced mosque).
+  Future<void> report(String id, {String? reason});
+}
+
 /// Local persistence: settings + last responses (offline honesty).
 abstract interface class LocalStore {
   Future<String?> read(String key);

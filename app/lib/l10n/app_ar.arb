@@ -213,5 +213,54 @@
   "prayerSourceTitle": "مصدر مواقيت الصلاة",
   "prayerSourceAuto": "تلقائي — الخادم، أو AlADHAN مباشرة عند الانقطاع",
   "prayerSourceBackend": "الخادم (عبر خادم Guide)",
-  "prayerSourceAladhan": "مباشرة من AlADHAN (بدون خادم)"
+  "prayerSourceAladhan": "مباشرة من AlADHAN (بدون خادم)",
+
+  "navigateGoogleMaps": "الملاحة عبر خرائط Google",
+  "navigateGoogleMapsNote": "يفتح رحلتك المختارة — نقطة الانطلاق، ومحطات المسجد المخططة بالترتيب، والوجهة. تحسب خرائط Google مسارها وأوقاتها الخاصة؛ وتبقى خطة الصلاة في Guide.",
+  "navigateLaunchFailed": "تعذر فتح خرائط Google على هذا الجهاز.",
+  "navigateMissingCoordinates": "هذه الرحلة تفتقد إلى الإحداثيات ولا يمكن تصديرها.",
+  "navigateLegTitle": "المرحلة {i} من {n}",
+  "@navigateLegTitle": {
+    "placeholders": { "i": { "type": "int" }, "n": { "type": "int" } }
+  },
+  "navigateMultiLegNote": "هذه الرحلة بها محطات أكثر مما تقبله خرائط Google في طلب واحد. تم تقسيمها إلى {n} مراحل بترتيب خطتك — افتح كل مرحلة بالتناوب؛ تُستأنف من حيث انتهت المرحلة السابقة.",
+  "@navigateMultiLegNote": {
+    "placeholders": { "n": { "type": "int" } }
+  },
+  "navigateOpenLeg": "افتح المرحلة {i}",
+  "@navigateOpenLeg": {
+    "placeholders": { "i": { "type": "int" } }
+  },
+  "navigateLegOpened": "فُتحت المرحلة {i} في خرائط Google. عد إلى هنا للمرحلة التالية عندما تكون مستعدًا.",
+  "@navigateLegOpened": {
+    "placeholders": { "i": { "type": "int" } }
+  },
+
+  "communitySection": "المجتمع",
+  "suggestMosque": "اقترح مسجدًا مفقودًا",
+  "suggestMosqueSubtitle": "ساعد الآخرين بإرسال مسجد غائب عن الخريطة",
+  "communityUnavailableDemo": "اقتراحات المساجد تتطلب اتصالًا بخادم Guide — غير متاحة في الوضع التجريبي.",
+  "mosqueLocation": "موقع المسجد",
+  "mosqueLocationSearch": "ابحث عن موقع المسجد",
+  "pickOnMapHint": "اضغط على الخريطة لتحديد الموقع الدقيق",
+  "mosqueNameOptional": "اسم المسجد (اختياري)",
+  "mosqueNameHint": "اتركه فارغًا إذا لم يكن للمسجد اسم معروف",
+  "mosqueAddressOptional": "العنوان أو الوصف (اختياري)",
+  "mosqueOpeningHoursOptional": "ساعات العمل، إن عُرفت (اختياري)",
+  "mosqueOpeningHoursNote": "ساعات العمل المقدَّمة من المجتمع تُعرض كغير موثقة",
+  "submitMosque": "أرسل للمراجعة",
+  "submittingMosque": "جارٍ الإرسال…",
+  "submissionSuccess": "تم الإرسال — بانتظار المراجعة. لن يظهر في تخطيط المسار حتى يؤكده المشرف.",
+  "submissionDuplicate": "تم إرسال مسجد مشابه مسبقًا (قيد المراجعة).",
+  "submissionLocationRequired": "حدد موقع المسجد أولًا.",
+  "mySubmissions": "طلباتي",
+  "mySubmissionsEmpty": "لا توجد طلبات على هذا الجهاز بعد.",
+  "statusUnverified": "غير موثق — بانتظار المراجعة",
+  "statusVerified": "موثق",
+  "reportIncorrect": "أبلغ عن معلومات خاطئة",
+  "reportReason": "ما هو الخطأ؟ (اختياري)",
+  "reportSubmitted": "تم الإبلاغ — شكرًا. سيراجع المشرف هذا السجل.",
+  "reportFailed": "تعذر إرسال البلاغ.",
+  "viewSubmissionStatuses": "حالة الطلبات",
+  "locationDeniedCommunity": "إذن الموقع مرفوض — حدد الموقع على الخريطة أو ابحث عنه بدلاً من ذلك."
 }
