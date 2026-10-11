@@ -20,6 +20,8 @@ os.environ.update(
         "MOSQUE_PROVIDER": "fixture",
         "GEOCODING_PROVIDER": "fixture",
         "OPTIMIZATION_PROVIDER": "internal",
+        # A local backend/.env may hold a real key; tests must never use it.
+        "GOOGLE_MAPS_API_KEY": "",
         "DATABASE_URL": "sqlite:///./guide_test.db",
         "AUTH_REQUIRED": "false",
         "RATE_LIMIT_PER_MINUTE": "100000",

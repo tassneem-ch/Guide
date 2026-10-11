@@ -1,6 +1,7 @@
 """Routing via Google Routes API (v2) — production provider, key required."""
 from __future__ import annotations
 
+import json
 from datetime import datetime
 
 from ..config import get_settings
@@ -79,7 +80,9 @@ class GoogleRoutesProvider:
             body["departureTime"] = depart_at.isoformat()
             body["routingPreference"] = "TRAFFIC_AWARE"
 
-        cache_key = ("google-route", body)
+        # Canonical JSON: the cache key must be hashable and must not vary
+        # with dict insertion order.
+        cache_key = ("google-route", json.dumps(body, sort_keys=True))
 
         async def fetch() -> dict:
             try:

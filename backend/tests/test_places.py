@@ -189,3 +189,42 @@ def test_aladhan_method_table_is_consistent():
                    PrayerMethod.DUBAI, PrayerMethod.EGYPTIAN,
                    PrayerMethod.ISNA, PrayerMethod.MWL):
         assert method in ALADHAN_METHOD_IDS
+
+
+@pytest.mark.asyncio
+async def test_google_mosque_search_uses_a_hashable_cache_key():
+    """Regression: the request body dict was passed to the TTL cache as a
+    key — dict is unhashable, so the first live call crashed with a 500."""
+    from app.core.cache import TTLCache
+    from app.domain.geo import GeoPoint
+    from app.providers.mosques_google import GoogleMosqueProvider
+
+    payload = {
+        "places": [
+            {
+                "id": "ChIJmosque1",
+                "displayName": {"text": "Mosque El Rahman"},
+                "location": {"latitude": 36.80, "longitude": 10.18},
+                "regularOpeningHours": {
+                    "weekdayDescriptions": ["Monday: 5:00 AM – 10:00 PM"]
+                },
+            }
+        ]
+    }
+    client = _StubClient([_StubResponse(payload), _StubResponse(payload)])
+    provider = GoogleMosqueProvider.__new__(GoogleMosqueProvider)
+    provider._key = "test-key"
+    provider._client = client
+    provider._cache = TTLCache(60)
+
+    center = GeoPoint(lat=36.8065, lon=10.1815, tz="Africa/Tunis")
+    first = await provider.search_near(center, 1500)
+    second = await provider.search_near(center, 1500)
+
+    assert first.status == "ok"
+    assert first.candidates[0].id == "google-ChIJmosque1"
+    assert first.candidates[0].name == "Mosque El Rahman"
+    assert first.candidates[0].quality.source == "live"
+    assert second.status == "ok"
+    assert len(client.requests) == 1, \
+        "the identical repeat search must be served from the TTL cache"

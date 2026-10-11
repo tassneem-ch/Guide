@@ -6,6 +6,7 @@ TTL cache (see docs/PROVIDERS.md for caching-terms notes).
 """
 from __future__ import annotations
 
+import json
 from datetime import datetime, timezone
 
 from ..config import get_settings
@@ -67,7 +68,9 @@ class GoogleMosqueProvider:
             }
         body = {k: v for k, v in body.items() if v is not None}
 
-        cache_key = ("google-places", body)
+        # Canonical JSON: the cache key must be hashable and must not vary
+        # with dict insertion order.
+        cache_key = ("google-places", json.dumps(body, sort_keys=True))
 
         async def fetch() -> dict:
             try:
