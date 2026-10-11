@@ -126,6 +126,10 @@ is reported as `no_data` ≠ `no_mosques`.
 | `POST /v1/trips/plan` | multi-day itinerary build/reschedule |
 | `GET/PUT /v1/me/preferences` | user scheduling preferences |
 | `GET/POST/DELETE /v1/trips` | saved itineraries (auth optional) |
+| `POST /v1/community/mosques` | submit a missing mosque (starts `unverified`; coordinates required, name optional; duplicate → 409) |
+| `GET /v1/community/mosques?ids=…` | status of one's own submissions (server-issued ids as capabilities; no list-all) |
+| `POST /v1/community/mosques/{id}/report` | report an incorrect community record |
+| `PATCH /v1/community/mosques/{id}/review` | minimal moderation: verify/reject via `X-Admin-Token` (404 while `ADMIN_TOKEN` unset) |
 | `POST /v1/auth/register`, `POST /v1/auth/login` | optional accounts/JWT |
 | `GET /v1/health` | liveness + provider mode report |
 
@@ -179,8 +183,12 @@ re-scheduling of the affected day, then whole-trip repair if boundaries move.
 SQLAlchemy 2.x; **SQLite by default** (zero-setup dev), **PostgreSQL + PostGIS when
 `DATABASE_URL` says so** (geospatial queries documented; haversine-compatible SQL used
 otherwise). Tables: `users`, `preferences`, `itineraries`, `trip_days` (JSON itinerary
-blob + metadata indexes). Auth is optional: `AUTH_REQUIRED=false` runs anonymous with
-local-only storage semantics; with JWT enabled, itineraries are per-user.
+blob + metadata indexes), plus `community_mosques` (community mosque submissions —
+added non-destructively via `create_all`; see `docs/PROVIDERS.md` for the data model:
+coordinates + optional name/address/hours, server-assigned `unverified|verified|rejected`
+status, audit timestamps, report counters). Auth is optional: `AUTH_REQUIRED=false`
+runs anonymous with local-only storage semantics; with JWT enabled, itineraries are
+per-user.
 
 ---
 

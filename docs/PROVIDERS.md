@@ -80,6 +80,53 @@ for offline development. Fixture responses are always marked
   hours are sparse and frequently missing (rendered as `unknown`, never
   guessed). No phone/website guarantees.
 
+## Mosques — community submissions (`+community` layer)
+
+A secondary, user-driven source that **augments** whichever mosque provider
+is configured — it never replaces Google or OSM, and health reports show it
+as e.g. `google+community (live)`.
+
+- **Endpoints** (see `docs/ARCHITECTURE.md` §4.1 for details):
+  - `POST /v1/community/mosques` — submit a missing mosque. Coordinates are
+    required; the name is optional (unnamed mosques are legitimate and are
+    never given an invented name). Submissions start `unverified`; the
+    status field is absent from the request schema, so a client cannot
+    claim verification.
+  - `GET /v1/community/mosques?ids=…` — look up the status of one's own
+    submissions (the server-issued UUIDs double as read capabilities, so no
+    account is required and no list-all endpoint exists).
+  - `POST /v1/community/mosques/{id}/report` — report an incorrect record.
+    At `COMMUNITY_REPORT_THRESHOLD` reports a verified record returns to
+    `unverified` and drops out of routing pending re-review.
+  - `PATCH /v1/community/mosques/{id}/review` — the minimal moderation
+    path: verify/reject (optionally correcting the name) with the
+    `X-Admin-Token` header. Effectively disabled (404) while `ADMIN_TOKEN`
+    is unset. There is no admin UI yet — this endpoint is the documented
+    follow-up target.
+- **Discovery integration**: the `CommunityMosqueProvider` decorator wraps
+  the active mosque provider inside the registry. Only `verified` records
+  join route-discovery results by default; `COMMUNITY_INCLUDE_UNVERIFIED=true`
+  is a deliberate operator opt-in that includes `unverified` records (still
+  labelled as unverified in every result). Records carry
+  `provider: community` and explicit provenance notes; opening hours a user
+  supplied are always shown as `unverified`.
+- **Deduplication** (community vs Google/OSM): a community record within
+  150 m of an external result with the same normalized name — or an unnamed
+  community record at the same spot — is dropped from discovery, and the
+  external record wins. Proximity never implies verification.
+- **Failure isolation**: any database error inside the community layer
+  returns the primary provider's results untouched — community problems
+  cannot fabricate, corrupt or hide Google/OSM data.
+- **Duplicate submissions**: `POST` rejects a second submission within
+  150 m with the same normalized name with `409`; different names at the
+  same coordinates (distinct mosques) are accepted.
+- **Configuration**: `COMMUNITY_MOSQUES_ENABLED` (default `true`),
+  `COMMUNITY_INCLUDE_UNVERIFIED` (default `false`),
+  `COMMUNITY_REPORT_THRESHOLD` (default `3`), `ADMIN_TOKEN` (default empty
+  = moderation disabled). Data lives in the `community_mosques` table —
+  adding it is a non-destructive `create_all` change; no existing table is
+  altered.
+
 ## Geocoding — Google (`geocoding_google`)
 
 - Per-request pricing (see Google Maps Platform page). Best global coverage.
