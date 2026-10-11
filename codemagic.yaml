@@ -1,0 +1,86 @@
+# Codemagic CI for Guide.
+#
+# Workflow "ios-testflight" builds the Flutter app and uploads it to
+# TestFlight (internal testing only — no beta review), so a physical
+# iPhone can install it over the air via the TestFlight app.
+#
+# REQUIRED SETUP IN THE CODEMAGIC UI BEFORE THE FIRST GREEN BUILD:
+#   1. Apple Developer Program membership ($99/yr) — iOS signing is
+#      impossible without it.
+#   2. Team settings > Team integrations > Developer Portal: add your
+#      App Store Connect API key (Issuer ID, Key ID, .p8 file).
+#      Create it at appstoreconnect.apple.com > Users and Access >
+#      Integrations > App Store Connect API (App Manager access).
+#   3. App Store Connect: create the app record for bundle ID
+#      com.guide.guide ("Guide"), then put its App ID (UUID from the
+#      app's URL in App Store Connect) into publishing.app_connect.app_id
+#      below.
+#
+# The workflow creates the signing certificate and App Store provisioning
+# profile automatically via the App Store Connect API (--create), so no
+# certificate upload is needed.
+workflows:
+  ios-testflight:
+    name: iOS TestFlight (physical device)
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    working_directory: app
+    environment:
+      # Keep in sync with the local toolchain (flutter --version).
+      flutter: 3.47.7
+      groups:
+        # Defined in Codemagic UI: APP_STORE_CONNECT_PRIVATE_KEY (.p8),
+        # APP_STORE_CONNECT_KEY_IDENTIFIER, APP_STORE_CONNECT_ISSUER_ID.
+        - app_store_connect
+      variables:
+        # Base URL of the Guide backend reachable FROM the iPhone.
+        # Must be an IP the phone's network can reach (same Wi-Fi /
+        # hotspot as this PC), backend must listen on 0.0.0.0:8000.
+        # 172.20.10.2 = this laptop's current Wi-Fi (hotspot) address;
+        # update this if the laptop's IP changes (ipconfig).
+        BACKEND_URL: http://172.20.10.2:8000
+    triggering:
+      events:
+        - push
+        - manual
+      branch_patterns:
+        - pattern: main
+          include: true
+    scripts:
+      - name: Get Flutter packages
+        script: flutter pub get
+      - name: Run Flutter tests
+        script: flutter test
+      - name: Set up keychain for signing
+        script: keychain initialize
+      - name: Fetch signing files (creates cert + App Store profile)
+        script: |
+          app-store-connect fetch-signing-files "com.guide.guide" \
+            --platform IOS \
+            --type IOS_APP_STORE \
+            --create
+      - name: Install signing certificate into keychain
+        script: keychain add-certificates
+      - name: Configure Xcode project signing
+        script: |
+          cd ios
+          # testFlightInternalTestingOnly: installable by internal
+          # testers only, no App Review needed — ideal for device tests.
+          xcode-project use-profiles \
+            --custom-export-options='{"testFlightInternalTestingOnly": true}'
+      - name: Build IPA (release, backend URL baked in)
+        script: |
+          flutter build ipa --release \
+            --build-name=1.0.0 \
+            --build-number="$CM_BUILD_NUMBER" \
+            --dart-define=BACKEND_URL="$BACKEND_URL" \
+            --export-options-plist="$HOME/export_options.plist"
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        # App UUID from App Store Connect (Apps > Guide > the id in the
+        # URL).  REQUIRED — replace before the first build.
+        app_id: REPLACE_WITH_APP_STORE_CONNECT_APP_ID
+        submit_for_testflight: true
