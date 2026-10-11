@@ -34,7 +34,10 @@ class FixtureMosqueProvider:
         candidates: list[MosqueCandidate] = []
         for i in range(self._count):
             angle = math.radians((seed + i * (360 // self._count)) % 360)
-            distance = radius_m * (0.25 + 0.13 * i)
+            # Plausible offsets (120-420 m at the default corridor radius):
+            # far enough to exercise detours, close enough to stay on the
+            # road network, so demo mode can actually demonstrate a stop.
+            distance = radius_m * (0.08 + 0.05 * i)
             dlat = (distance * math.sin(angle)) / 111_320.0
             dlon = (distance * math.cos(angle)) / (
                 111_320.0 * max(abs(math.cos(math.radians(center.lat))), 1e-6)

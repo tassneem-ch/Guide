@@ -227,6 +227,16 @@ def solve(
         ]
         no_data = [e for e in result.missed if e not in budget_skipped]
         result.skipped_by_budget = budget_skipped
+        # Silence is not honesty: whenever candidates existed but were
+        # rejected, say why — in every mode, not just mandatory.
+        for event in budget_skipped:
+            reason = _rejection_summary(
+                event, matched[events.index(event)], depart_utc, options
+            )
+            result.notes.append(
+                f"{event.name.value.capitalize()}: nearby candidates existed "
+                f"but none were usable — {reason}."
+            )
         if budget_skipped and options.prayer_stops == "mandatory":
             result.notes.append(
                 "Some journey prayers could not be given a stop within your "
@@ -241,3 +251,41 @@ def solve(
             )
 
     return result
+
+
+def _rejection_summary(
+    event: PrayerEvent,
+    candidates: list[RouteCandidate],
+    depart_utc: datetime,
+    options: PlanningOptions,
+) -> str:
+    """Classify why no candidate served [event] — the honest counter-part
+    of the DP's silent gate rejections (budget / waiting / deadline)."""
+    budget_s = options.max_detour_min * 60
+    window_s = options.planning_window_min * 60
+    buffer_s = options.prayer_buffer_min * 60
+    over_budget = wait_too_long = too_late = 0
+    for cand in candidates:
+        if cand.detour_seconds > budget_s:
+            over_budget += 1
+            continue
+        arrival = depart_utc + timedelta(
+            seconds=cand.eta_at_anchor_s + cand.leg_seconds
+        )
+        if arrival > event.utc + timedelta(seconds=buffer_s):
+            too_late += 1
+        elif (event.utc - arrival).total_seconds() > window_s:
+            wait_too_long += 1
+    parts: list[str] = []
+    if over_budget:
+        parts.append(
+            f"{over_budget} exceeded the {options.max_detour_min} min detour limit"
+        )
+    if wait_too_long:
+        parts.append(
+            f"{wait_too_long} would need more than "
+            f"{options.planning_window_min} min of waiting"
+        )
+    if too_late:
+        parts.append(f"{too_late} could not arrive before the prayer window")
+    return ", ".join(parts) or "none met the detour and timing limits"

@@ -83,7 +83,9 @@ async def discover_mosques_along_route(
 
     return MosqueSearchResult(
         candidates=list(merged.values()),
-        status="ok",
+        # Preserve a fixture verdict: callers label plans by status, and a
+        # synthetic candidate must never read as live data.
+        status="fixture" if statuses == {"fixture"} else "ok",
         message=None,
     )
 

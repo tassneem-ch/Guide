@@ -64,6 +64,31 @@ def eta_seconds_at_vertex(cum: list[float], index: int, route: RouteResult) -> i
     return int(route.duration_s * fraction)
 
 
+def anchors_near_events(
+    route: RouteResult,
+    events: list[PrayerEvent],
+    depart_utc: datetime,
+    span: int = 1,
+) -> list[int]:
+    """Geometry vertices surrounding where each prayer falls on the journey.
+
+    Corridor searches cluster around these so candidate ETAs line up with
+    prayer times — the difference between a 2-minute wait and a 40-minute
+    one (which the scheduler must then reject).
+    """
+    if not events or not route.geometry or route.duration_s <= 0:
+        return []
+    n = len(route.geometry)
+    indices: set[int] = set()
+    for event in events:
+        frac = (event.utc - depart_utc).total_seconds() / route.duration_s
+        center = int(round(min(max(frac, 0.0), 1.0) * (n - 1)))
+        for i in range(center - span, center + span + 1):
+            if 0 <= i < n:
+                indices.add(i)
+    return sorted(indices)
+
+
 async def sample_journey_prayers(
     provider: PrayerTimeProvider,
     route: RouteResult,

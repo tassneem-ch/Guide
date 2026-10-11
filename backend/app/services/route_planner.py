@@ -82,18 +82,26 @@ class RoutePlanner:
             )
 
         # --- anchors, ETAs, prayer sampling -------------------------------
-        anchors = sampling.select_sample_indices(primary.geometry)
-        cum = sampling.cumulative_distances(primary.geometry)
-        base_etas = {
-            i: sampling.eta_seconds_at_vertex(cum, i, primary)
-            for i in anchors
-        }
-
         events, sample_notes = await sampling.sample_journey_prayers(
             self.prayer, primary, depart, req.prayer,
             waypoints=req.waypoints,
         )
         notes.extend(sample_notes)
+
+        anchors = set(sampling.select_sample_indices(primary.geometry))
+        if events and req.options.prayer_stops != "none":
+            # Mosque corridors are searched where prayers actually fall, so
+            # candidate ETAs line up with prayer times (small waits instead
+            # of candidates that are hours away from the window).
+            anchors.update(
+                sampling.anchors_near_events(primary, events, depart)
+            )
+        anchors = sorted(anchors)
+        cum = sampling.cumulative_distances(primary.geometry)
+        base_etas = {
+            i: sampling.eta_seconds_at_vertex(cum, i, primary)
+            for i in anchors
+        }
 
         # --- mosque discovery + detour evaluation ------------------------
         candidates: list[RouteCandidate] = []
