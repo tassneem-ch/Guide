@@ -127,7 +127,16 @@ async def test_google_details_resolves_coordinates():
     _, url, _, headers, params = client.requests[0]
     assert url.endswith("/places/ChIJabc123")
     assert params["sessionToken"] == "sess-123"
-    assert "places.location" in headers["X-Goog-FieldMask"]
+    # Details returns a single bare `Place` resource: the field mask must
+    # NOT be prefixed with `places.` (that prefix is for search endpoints
+    # that return a places[] array). Google rejects a prefixed mask here
+    # with 400 INVALID_ARGUMENT — verified against the live API.
+    mask = headers["X-Goog-FieldMask"]
+    assert "location" in mask
+    assert "formattedAddress" in mask
+    assert not any(
+        part.startswith("places.") for part in mask.split(",")
+    ), f"details field mask must be unprefixed, got: {mask}"
 
 
 def test_autocomplete_endpoint_keyless_path(client):

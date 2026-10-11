@@ -29,10 +29,16 @@ _PREDICTION_FIELD_MASK = ",".join(
     ]
 )
 
+# Place Details (New) returns a single bare `Place` resource, not a
+# `places[]` collection, so these mask paths must NOT carry the `places.`
+# prefix that the search endpoints use. Google rejects a prefixed mask on
+# this endpoint with 400 INVALID_ARGUMENT ("Cannot find matching fields
+# for path 'places.formattedAddress'").
 _DETAILS_FIELD_MASK = ",".join(
     [
-        "places.formattedAddress",
-        "places.location",
+        "id",
+        "formattedAddress",
+        "location",
     ]
 )
 
