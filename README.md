@@ -5,7 +5,7 @@ see which mosques you can stop at along the way, and get an honest answer
 about how each option treats your prayers — including when the answer is
 "not well."
 
-Built with Flutter (Android and iOS from one codebase) and a FastAPI
+Built with Flutter (Android, iOS, and web from one codebase) and a FastAPI
 backend. Works worldwide: no hardcoded country, timezone, language, or
 calculation method — just UTC instants and local IANA timezones. Available
 in English, Arabic (right-to-left), and French.
@@ -65,7 +65,7 @@ draggable sheet:
 |------|----------|
 | `backend/` | FastAPI app, provider adapters, scheduling engine, 81 tests |
 | `app/` | Flutter client, l10n (en/ar/fr), widget tests |
-| `docs/` | [Architecture](docs/ARCHITECTURE.md) · [Setup](docs/SETUP.md) · [Providers](docs/PROVIDERS.md) |
+| `docs/` | [Architecture](docs/ARCHITECTURE.md) · [Setup](docs/SETUP.md) · [Providers](docs/PROVIDERS.md) · [Web & deployment](docs/WEB_DEPLOY.md) |
 
 ## Quick start
 
@@ -86,6 +86,20 @@ cd app
 flutter pub get
 flutter run --dart-define=BACKEND_URL=http://10.0.2.2:8000   # Android emulator
 ```
+
+Web (same codebase, `web-version` branch):
+
+```powershell
+cd app
+flutter run -d chrome                 # API defaults to http://localhost:8000
+# or a release build:
+flutter build web --release
+python tool\serve_web.py 8081         # http://localhost:8081
+```
+
+The web build renders the same keyless OpenStreetMap map and calls the same
+backend — see [docs/WEB_DEPLOY.md](docs/WEB_DEPLOY.md) for deep links, CORS,
+HTTPS, and hosting.
 
 No API keys needed to develop: the backend defaults to AlAdhan (prayers),
 OSRM (routing), OpenStreetMap/Overpass (mosques), and Nominatim
@@ -139,3 +153,7 @@ Being honest about these is the whole point of the project, so:
 - **Verified on emulators and tests, not physical hardware.** The
   Google Maps handoff and community flows have been exercised end-to-end on
   an Android emulator; iOS and physical-device testing are still pending.
+- **The web build is verified in a desktop browser only** (release build:
+  rendering, deep links, and API calls). It hasn't been tested on a physical
+  device, and the iOS build wasn't re-run on this Windows machine (no Xcode)
+  after the web changes — see [docs/WEB_DEPLOY.md](docs/WEB_DEPLOY.md).
