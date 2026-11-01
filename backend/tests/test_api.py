@@ -42,6 +42,50 @@ def test_prayer_capabilities_reflect_provider(client):
     assert any("FIXTURE" in note for note in body["notes"])
 
 
+def test_aladhan_raises_the_shared_provider_error():
+    """Guards the 502 contract below.
+
+    `api/prayer.py` catches `providers.google_common.ProviderError`. If the
+    AlAdhan provider raises a *different* class of the same name, that except
+    clause never matches, the failure escapes as an unhandled HTTP 500, and the
+    response body is empty - so the app has nothing honest to show the user.
+    """
+    from app.providers.google_common import ProviderError
+    from app.providers.prayer_aladhan import ProviderError as AladhanError
+
+    assert AladhanError is ProviderError
+
+
+def test_prayer_provider_failure_returns_502_with_a_reason(client, monkeypatch):
+    """An unreachable prayer provider must surface as 502 plus a message."""
+    import httpx
+
+    from app.providers.prayer_aladhan import AladhanPrayerProvider
+    from app.providers.registry import get_providers
+
+    class _Unreachable:
+        async def get(self, *args, **kwargs):
+            raise httpx.ConnectTimeout("handshake operation timed out")
+
+    provider = AladhanPrayerProvider()
+    provider._client = _Unreachable()
+    monkeypatch.setattr(get_providers(), "prayer", provider)
+
+    response = client.post(
+        "/v1/prayer-times",
+        json={
+            "point": {"lat": 48.8566, "lon": 2.3522, "tz": "Europe/Paris"},
+            "date": "2025-06-15",
+            "config": {"method": "mwl", "school": "standard"},
+        },
+    )
+    assert response.status_code == 502
+    detail = response.json()["detail"]
+    assert "AlAdhan request failed" in detail
+    # The reason must name the failure, not be blank.
+    assert "ConnectTimeout" in detail
+
+
 def test_route_alternatives_endpoint(client):
     response = client.post(
         "/v1/routes/alternatives",

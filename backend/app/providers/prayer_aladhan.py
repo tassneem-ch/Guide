@@ -26,6 +26,7 @@ from ..domain.prayer import (
     PrayerMethod,
     PrayerName,
 )
+from .google_common import ProviderError
 
 # Our method enum -> AlAdhan numeric method id. Ids verified against the
 # provider's own catalog: GET https://api.aladhan.com/v1/methods (the API's
@@ -89,10 +90,6 @@ _TIMING_KEYS: dict[PrayerName, str] = {
     PrayerName.MAGHRIB: "Maghrib",
     PrayerName.ISHA: "Isha",
 }
-
-
-class ProviderError(RuntimeError):
-    """Raised when a live provider fails — callers must surface it, never mask it."""
 
 
 class AladhanPrayerProvider:
@@ -176,7 +173,14 @@ class AladhanPrayerProvider:
             response.raise_for_status()
             payload = response.json()
         except httpx.HTTPError as exc:
-            raise ProviderError(f"AlAdhan request failed: {exc}") from exc
+            # httpx leaves str() empty for some failures (certain timeouts
+            # and connect errors), which produced the useless message
+            # "AlAdhan request failed: ". Name the exception type so the
+            # failure stays diagnosable either way.
+            reason = str(exc).strip() or type(exc).__name__
+            raise ProviderError(
+                f"AlAdhan request failed ({type(exc).__name__}): {reason}"
+            ) from exc
         if payload.get("code") != 200 or "data" not in payload:
             raise ProviderError(f"AlAdhan returned an error payload: {payload!r}")
 
