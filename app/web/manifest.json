@@ -1,0 +1,35 @@
+{
+    "name": "Guide — Prayer-Aware Travel Planner",
+    "short_name": "Guide",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#00695C",
+    "theme_color": "#00695C",
+    "description": "A prayer-aware travel planner: real routes, mosque stops along the way, and an honest answer on whether the journey fits your prayers.",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "icons/Icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-maskable-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "icons/Icon-maskable-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ]
+}

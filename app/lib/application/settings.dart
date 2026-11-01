@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -15,9 +16,17 @@ import '../domain/repositories.dart';
 /// Default backend base URL per platform. Overridable in Settings or via
 /// `--dart-define=BACKEND_URL=...` at build time (never a secret — this is a
 /// public endpoint address; provider API keys stay server-side only).
+///
+/// - Android emulator reaches the host machine via `10.0.2.2`.
+/// - A browser runs on the host itself, so it uses `localhost` (the
+///   `10.0.2.2` alias does not resolve outside the emulator).
+///
+/// [kIsWeb] is a compile-time constant, so this stays `const` (required: it
+/// is used as a default parameter value). Mobile keeps the same default as
+/// before this branch.
 const String kDefaultBackendUrl = String.fromEnvironment(
   'BACKEND_URL',
-  defaultValue: 'http://10.0.2.2:8000', // Android emulator loopback alias
+  defaultValue: kIsWeb ? 'http://localhost:8000' : 'http://10.0.2.2:8000',
 );
 
 class AppSettings {
