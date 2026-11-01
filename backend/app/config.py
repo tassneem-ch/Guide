@@ -73,7 +73,17 @@ class Settings(BaseSettings):
 
     # Security / limits
     rate_limit_per_minute: int = 60
-    cors_origins: str = "http://localhost:3000,http://localhost:5000"
+    # Browser origins allowed to call the API. The Flutter web dev server
+    # (`flutter run -d chrome`) picks a free port — commonly 8080 or 8081 —
+    # so a few common local dev origins must be listed, or the browser
+    # blocks every request (CORS). 3000/5000 are kept for the other dev
+    # servers historically used here. Deployed origins are added the same
+    # way via the CORS_ORIGINS env var.
+    cors_origins: str = (
+        "http://localhost:3000,http://localhost:5000,"
+        "http://localhost:8080,http://localhost:8081,"
+        "http://127.0.0.1:8080,http://127.0.0.1:8081"
+    )
 
     log_level: str = "INFO"
 
