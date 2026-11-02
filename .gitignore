@@ -29,6 +29,11 @@ backend/.env
 backend/*.db
 backend/data/*.db
 
+# Vercel (deploy config is committed; local link state and the pre-built
+# Flutter bundle in public/ are not)
+.vercel/
+public/
+
 # IDE / OS
 .idea/
 .vscode/
@@ -39,3 +44,6 @@ Thumbs.db
 # Logs & temp
 *.log
 .cache/
+
+# Vercel CLI local state + the .env.local it writes (contains an OIDC token)
+.env*

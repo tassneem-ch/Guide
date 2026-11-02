@@ -1,0 +1,31 @@
+# Files never uploaded to Vercel.
+#
+# Secrets and local state first: backend/.env holds the server-side Google
+# Maps key (never in a client bundle, never on a third-party host), and the
+# SQLite databases are local data.
+
+# Secrets
+backend/.env
+
+# Local databases
+backend/*.db
+backend/data/*.db
+*.db
+
+# Local tooling / Vercel state
+.git
+.vercel
+backend/.venv/
+venv/
+**/__pycache__/
+
+# Flutter sources are not used by Vercel: the web bundle is built locally
+# with `flutter build web` and copied into public/ before deploying.
+# (public/ itself must NOT be listed here.)
+app/.dart_tool/
+app/build/
+app/android/
+app/ios/
+app/windows/
+app/linux/
+app/macos/

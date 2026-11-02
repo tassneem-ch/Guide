@@ -65,7 +65,8 @@ working if you later opt into the prettier *path* strategy by calling
 ## 2. Deploy
 
 The web app and the API are **two separate deployments** — the browser talks to
-the API over HTTPS.
+the API over HTTPS. (Exception: **Vercel can host both in one project** — see
+§2.5, which is what this repo is currently deployed with.)
 
 | Piece | What it is | Where to host |
 | --- | --- | --- |
@@ -126,6 +127,63 @@ only expose the **Geolocation API** ("Use my location") and other
 powerful features in a **secure context** — that means HTTPS, or `localhost`
 during development. Plain-HTTP hosting would silently break location features.
 
+### 2.5 Vercel — one project for both (what this repo ships)
+
+**Live:** <https://guide-app-omega.vercel.app>
+
+A single Vercel project (`guide-app`) serves the Flutter build from the CDN
+**and** runs the FastAPI app as one Vercel Function. Frontend and API share one
+origin, so §2.3's CORS configuration is unnecessary there — no cross-origin
+request ever happens.
+
+| Repo file | Role |
+| --- | --- |
+| `main.py` (root) | Vercel entrypoint; re-exports `backend.app.main:app` (the same instance `uvicorn app.main:app` runs locally) |
+| `requirements.txt` (root) | flat copy of `backend/requirements.txt` — Vercel's parser rejects `-r` includes, keep the two in sync |
+| `vercel.json` | `functions["main.py"].maxDuration = 60` |
+| `.vercelignore` | keeps `backend/.env` (server-side key), `*.db`, and Flutter sources out of the upload; **`public/` must never be listed** |
+| `backend/__init__.py` | makes `backend.app.main` a deterministic import for the entrypoint |
+| `public/` | the Flutter release build — git-ignored, copied in before each deploy |
+
+Environment variables (project settings — never in the repo):
+
+- `DATABASE_URL=sqlite:////tmp/guide.db` — Vercel's filesystem is read-only
+  outside `/tmp`; `init_db()` only runs `create_all`, so this needed **zero
+  code changes**.
+- `JWT_SECRET` — a random value (auth is optional by default; this keeps
+  issued tokens unforgeable versus the repo's placeholder).
+
+Redeploy (Vercel CLI, authenticated with `vercel login`):
+
+```powershell
+cd app
+flutter build web --release --dart-define=BACKEND_URL=https://guide-app-omega.vercel.app
+cd ..
+New-Item -ItemType Directory -Path public -ErrorAction SilentlyContinue
+Copy-Item app\build\web\* public\ -Recurse -Force
+vercel deploy --prod --yes
+```
+
+> **The GitHub integration is deliberately disconnected.** A Git-connected
+> build would deploy *without* `public/` (it is git-ignored and Flutter is not
+> built on Vercel), silently replacing the working site with a frontend-less
+> one. Deploys go through the CLI command above; `vercel git connect` should
+> only be re-enabled alongside a CI step that builds Flutter.
+
+Vercel-specific caveats:
+
+- **`/tmp` data is ephemeral** — saved trips, community submissions, and
+  registered users vanish on redeploy and on cold starts of a fresh instance.
+  Fine for testing; point `DATABASE_URL` at a real Postgres before anyone
+  relies on the data.
+- **Function timeout** is 60 s (`vercel.json`); every provider client timeout
+  (AlAdhan 15 s, etc.) sits well inside it.
+- **Mosque discovery depends on the public Overpass instances**, which were
+  globally unavailable at deploy time (502/504/timeouts from four probe
+  countries). The API answers its honest `status: no_data` message — "mosque
+  data could not be checked" — never a fake-empty list. Re-run
+  `POST /v1/mosques/search` once the instances recover.
+
 ---
 
 ## 3. What changed (small on purpose)
@@ -169,8 +227,24 @@ during development. Plain-HTTP hosting would silently break location features.
 | Narrow window (480px) | full-bleed mobile layout, nothing clipped |
 | `flutter analyze lib` | no issues |
 | `flutter test` | 57/57 passed |
-| `backend pytest` | 81/81 passed |
+| `backend pytest` | 83/83 passed (2 prayer-502 regression tests added) |
 | `flutter build apk --debug` | succeeded (mobile unaffected) |
+
+### 5.1 Deployed on Vercel (2026-11-02)
+
+| Check | Result |
+| --- | --- |
+| `GET /` + `main.dart.js` + canvaskit over HTTPS | 200, correct types, publicly reachable (no auth wall) |
+| App boots in a real browser | renders Plan-a-journey card, map area, bottom sheet; **0 console errors** |
+| In-app `GET /v1/prayer-times/capabilities` | **200** (the deployed bundle calling the deployed API) |
+| In-app places autocomplete (`?q=Riyadh`) | 200 — suggestions rendered |
+| In-app `POST /v1/prayer-times` after picking a location | **200** — card rendered "Today's prayers … ⚡ Live data", Riyadh times for 2026-11-02, method `mwl`, working next-prayer countdown |
+| `POST /v1/prayer-times` direct (AlAdhan from Vercel) | 200, `source: aladhan, live: true` — the local machine's blocked network does not affect Vercel |
+| `POST /v1/routes/alternatives` (OSRM) | 200 live |
+| `POST /v1/geocode` (Nominatim) | 200 live |
+| `GET /v1/health` | 200 — all providers report live modes |
+| `POST /v1/mosques/search` (Overpass) | honest `status: no_data` — all public Overpass instances were down globally at the time (502/504/timeouts from NL/UA/US/VN/CA/RU probes), not a Vercel or app fault |
+| OSM map tiles | could not be verified **live** from this machine (the local hotspot MTU issue blocks `tile.openstreetmap.org`; the interactive browser's tiles came from its cache). On a normal network they are plain HTTPS requests from the client to OSM. |
 
 ---
 
@@ -180,8 +254,11 @@ during development. Plain-HTTP hosting would silently break location features.
   changes do not touch `ios/`, and the Android build passes, but an iOS build
   should be re-run on a Mac before a store release.
 - **Physical-device web testing** was not performed; verification used a
-  desktop browser.
+  desktop browser (the deployed URL is ready for other devices to open).
 - **Browser geolocation** needs HTTPS in production (§2.4).
 - Google Maps' client renderer is not used on web — the web app renders the
   keyless OpenStreetMap layer, and "Navigate with Google Maps" still hands off
   to the real Google Maps app/plans page as on mobile.
+- **Vercel deployment state** (§2.5): database is ephemeral `/tmp` SQLite;
+  mosque discovery waits on the public Overpass instances to recover; Git-based
+  deploys are intentionally off (CLI only).
