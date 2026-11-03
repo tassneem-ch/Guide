@@ -106,3 +106,38 @@ async def test_departure_city_times_are_not_reused_along_the_route(prayer_provid
     zones = {e.tz for e in events}
     assert "Africa/Tunis" in zones        # departure region
     assert "Europe/Paris" in zones        # destination region gets its own times
+
+
+def test_dedupe_merges_samples_across_clock_bucket_boundary():
+    """05:14 and 05:15 local are one Fajr, not two events.
+
+    The old fixed 15-minute clock bucket split near-identical samples that
+    straddled a boundary, producing duplicate prayer events (and a bogus
+    '0 of 2 prayers' answer).
+    """
+    from app.domain.prayer import AsrSchool, PrayerEvent, PrayerMethod
+    from app.services.prayer_sampling import _dedupe
+
+    def fajr(utc: datetime) -> PrayerEvent:
+        local = utc.astimezone(ZoneInfo("Africa/Tunis")).replace(tzinfo=None)
+        return PrayerEvent(
+            name=PrayerName.FAJR,
+            utc=utc,
+            local=local,
+            tz="Africa/Tunis",
+            local_date=local.date(),
+            location=TUNIS,
+            method=PrayerMethod.MWL,
+            school=AsrSchool.STANDARD,
+            source="test",
+            live=False,
+        )
+
+    first = datetime(2026, 11, 3, 4, 14, tzinfo=timezone.utc)   # 05:14 local
+    second = first + timedelta(minutes=1)                        # 05:15 local
+    assert len(_dedupe([fajr(first), fajr(second)])) == 1, \
+        "samples a minute apart are the same prayer"
+
+    # A genuinely distant same-key sample keeps the old defensive separation.
+    distant = first + timedelta(minutes=40)
+    assert len(_dedupe([fajr(first), fajr(distant)])) == 2

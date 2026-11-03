@@ -1,11 +1,12 @@
 """Route feasibility: plan structure, metrics consistency, waypoints."""
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 
 import pytest
 
 from app.domain.geo import GeoPoint
+from app.domain.mosque import MosqueSearchResult
 from app.domain.prayer import PrayerConfig
 from app.domain.route import (
     PlanningOptions,
@@ -116,3 +117,94 @@ async def test_explanations_exist_for_each_plan(planner):
     response = await planner.plan(make_request())
     for plan in response.alternatives:
         assert plan.explanation, "every plan must explain its choices"
+
+
+class _NoDataMosqueProvider:
+    """Reachable provider with no mosque data (e.g. an Overpass outage)."""
+
+    name = "stub"
+    live = True
+
+    async def search_near(self, center, radius_m, query=None):
+        return MosqueSearchResult(
+            candidates=[], status="no_data",
+            message="Mosque data unavailable.",
+        )
+
+    async def close(self):
+        return None
+
+
+@pytest.mark.asyncio
+async def test_mandatory_prayer_stops_mark_plan_infeasible_when_unmet(
+    routing_provider, prayer_provider,
+):
+    """prayer_stops='mandatory' must reach the UI: feasible=False + reason."""
+    from app.services.route_planner import RoutePlanner
+
+    planner = RoutePlanner(
+        routing_provider, prayer_provider, _NoDataMosqueProvider()
+    )
+    response = await planner.plan(
+        make_request(options=PlanningOptions(prayer_stops="mandatory"))
+    )
+    assert response.alternatives[0].prayer_events, \
+        "precondition: the journey must contain prayers"
+    for plan in response.alternatives:
+        assert plan.metrics.prayers_missed, plan.preference
+        assert plan.feasible is False, plan.preference
+        assert plan.infeasibility_reason, plan.preference
+        assert "mandatory" in plan.infeasibility_reason.lower()
+        # exactly one explicit mandatory explanation, not a wall of repeats
+        mandatory_lines = [
+            l for l in plan.explanation if "mandatory" in l.lower()
+        ]
+        assert len(mandatory_lines) == 1, plan.explanation
+        # the outage message must appear at most once per plan, never
+        # repeated once per searched anchor.
+        joined = "\n".join(plan.explanation)
+        assert joined.count("Mosque data unavailable.") <= 1, plan.explanation
+
+
+@pytest.mark.asyncio
+async def test_optional_prayer_stops_stay_feasible_despite_missed_prayers(
+    planner,
+):
+    """Non-regression: only 'mandatory' turns missed prayers into
+    infeasibility — 'optional' plans with misses remain selectable."""
+    response = await planner.plan(
+        make_request(options=PlanningOptions(prayer_stops="optional"))
+    )
+    assert response.alternatives[0].prayer_events, \
+        "precondition: the journey must contain prayers"
+    for plan in response.alternatives:
+        assert plan.feasible is True, plan.preference
+        assert plan.infeasibility_reason is None, plan.preference
+
+
+@pytest.mark.asyncio
+async def test_mandatory_prayer_stops_stay_feasible_when_every_prayer_served(
+    prayer_provider, routing_provider, mosque_provider,
+):
+    """The enforcement rule only fires when a prayer is actually missed."""
+    from app.providers.base import RouteResult
+    from app.services.route_planner import RoutePlanner
+    from app.services.scheduler import ScheduleResult
+
+    planner = RoutePlanner(routing_provider, prayer_provider, mosque_provider)
+    depart = datetime(2025, 6, 15, 11, 50, tzinfo=timezone(timedelta(hours=2)))
+    day = await prayer_provider.day_prayers(
+        PARIS, date(2025, 6, 15), PrayerConfig()
+    )
+    route = RouteResult(
+        geometry=[PARIS, LYON], distance_m=400_000, duration_s=14_000,
+        provider="stub", live=False,
+    )
+    plan = planner._build_plan(
+        req=make_request(options=PlanningOptions(prayer_stops="mandatory")),
+        route=route, depart=depart, events=list(day.events),
+        schedule=ScheduleResult(missed=[]),   # solver served everything
+        candidates=[], preference=Preference.PRAYER_FRIENDLY,
+    )
+    assert plan.feasible is True
+    assert plan.infeasibility_reason is None

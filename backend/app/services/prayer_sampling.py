@@ -18,7 +18,12 @@ from ..core.timeutil import resolve_tz
 # Sampling: at most this many geometry points, roughly every ~40 km.
 DEFAULT_MAX_SAMPLES = 12
 SAMPLE_SPACING_M = 40_000
-DEDUP_BUCKET_MINUTES = 15
+# Samples along the route compute the same prayer a minute or two apart
+# (different coordinates). Events sharing (name, tz, local date) are merged
+# when they fall within this window of each other — a fixed clock-bucket
+# boundary must never split one prayer into two (05:14 and 05:15 is one
+# Fajr, not two).
+DEDUP_MERGE_MINUTES = 15
 MAX_JOURNEY_EVENTS = 40
 
 
@@ -180,14 +185,22 @@ def _nearest_vertex(geometry: list[GeoPoint], point: GeoPoint) -> int:
 
 
 def _dedupe(events: list[PrayerEvent]) -> list[PrayerEvent]:
-    """Keep the first event per (name, tz, local date, 15-min bucket)."""
-    seen: set[tuple] = set()
-    unique: list[PrayerEvent] = []
+    """Keep the first event per (name, tz, local date), merging samples that
+    disagree by less than DEDUP_MERGE_MINUTES.
+
+    The window is relative to the last *kept* event (not an aligned clock
+    bucket), so near-identical samples straddling a boundary merge while
+    genuinely distant same-key events keep the old defensive separation.
+    """
+    kept: list[PrayerEvent] = []
+    last_kept: dict[tuple, datetime] = {}
     for event in sorted(events, key=lambda e: e.utc):
-        bucket = int(event.utc.timestamp() // (DEDUP_BUCKET_MINUTES * 60))
-        key = (event.name, event.tz, event.local_date, bucket)
-        if key in seen:
+        key = (event.name, event.tz, event.local_date)
+        prev = last_kept.get(key)
+        if prev is not None and (event.utc - prev) < timedelta(
+            minutes=DEDUP_MERGE_MINUTES
+        ):
             continue
-        seen.add(key)
-        unique.append(event)
-    return unique
+        last_kept[key] = event.utc
+        kept.append(event)
+    return kept

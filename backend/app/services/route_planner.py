@@ -286,6 +286,20 @@ class RoutePlanner:
             prayers_missed=[e.name.value for e in schedule.missed],
         )
 
+        # "mandatory" means every in-journey prayer must get a planned stop;
+        # a plan that misses any is infeasible and the UI warns/disables it.
+        feasible = schedule.feasible
+        infeasibility_reason: str | None = None
+        if options.prayer_stops == "mandatory" and events and schedule.missed:
+            feasible = False
+            missed = sorted({
+                e.name.value.capitalize() for e in schedule.missed
+            })
+            infeasibility_reason = (
+                "Prayer stops are mandatory for this trip, but no stop could "
+                f"be planned for: {', '.join(missed)}."
+            )
+
         plan = RoutePlan(
             preference=preference,
             legs=legs,
@@ -297,7 +311,8 @@ class RoutePlanner:
             route_provider=route.provider,
             route_live=route.live,
             geometry=route.geometry,
-            feasible=schedule.feasible,
+            feasible=feasible,
+            infeasibility_reason=infeasibility_reason,
         )
 
         plan.explanation = self._explain(
@@ -377,6 +392,15 @@ class RoutePlanner:
                     f"{event.name.value.capitalize()} "
                     f"({event.local.strftime('%H:%M')} local): no stop planned."
                 )
+
+        if options.prayer_stops == "mandatory" and events and schedule.missed:
+            missed = sorted({
+                e.name.value.capitalize() for e in schedule.missed
+            })
+            lines.append(
+                "Prayer stops are mandatory for this trip: this plan cannot "
+                f"serve {', '.join(missed)} and is marked infeasible."
+            )
 
         if mosque_status == "no_data" and preference != Preference.FASTEST:
             lines.append(

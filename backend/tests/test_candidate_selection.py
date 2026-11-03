@@ -321,3 +321,18 @@ def test_anchors_near_events_bracket_the_prayer_position():
 
     assert anchors_near_events(route, [halfway], depart) == [49, 50, 51]
     assert anchors_near_events(route, [], depart) == []
+
+
+@pytest.mark.asyncio
+async def test_outage_message_reported_once_not_per_anchor():
+    """An outage fails every anchor identically — report it once, not N times."""
+    message = "Overpass unavailable on all instances."
+    geometry = [GeoPoint(lat=48.0 + i * 0.01, lon=2.0) for i in range(30)]
+    result = await discover_mosques_along_route(
+        EmptyMosqueProvider(message=message),
+        geometry,
+        list(range(len(geometry))),
+    )
+    assert result.status == "no_data"
+    assert result.message is not None
+    assert result.message.count(message) == 1

@@ -55,7 +55,9 @@ async def discover_mosques_along_route(
         anchor = geometry[idx]
         result = await mosque_provider.search_near(anchor, corridor_radius_m)
         statuses.add(result.status)
-        if result.message:
+        # Every anchor fails the same way during an outage — report the
+        # message once instead of once per anchor.
+        if result.message and result.message not in messages:
             messages.append(result.message)
         for candidate in result.candidates:
             existing = merged.get(candidate.id)

@@ -29,7 +29,8 @@ async def search_mosques(req: MosqueSearchRequest, request: Request) -> MosqueSe
     for point in req.corridor_points[::step]:
         extra = await provider.search_near(point, req.radius_m)
         statuses.add(extra.status)
-        if extra.message:
+        # Same outage hits every corridor point — keep the message once.
+        if extra.message and extra.message not in messages:
             messages.append(extra.message)
         for candidate in extra.candidates:
             merged.setdefault(candidate.id, candidate)
